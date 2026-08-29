@@ -30,13 +30,13 @@ export default function App() {
     return `A cute Japanese elementary school lunch tray (Kyushoku) layout containing: ${menuString}. bright pop anime style, clean lines, colorful, vector graphic feel, top-down isometric view, clean background, bright appetite-inducing visual for kids, high resolution.`;
   };
 
-  // 画像生成APIを呼び出す関数
+  // 画像生成APIを呼び出す関数（Gemini API 対応版）
   const callGenerateApi = async (prompt) => {
     // ↓↓ ★ここに取得したAPIキーを入れてください★ ↓↓
     const apiKey = "AQ.Ab8RN6JXb17jD9clF8s4rOPC9MCenjmxkO8x4WApx9GHk2GJhQ"; 
     
-    // Imagen 3 の画像生成 API エンドポイント
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
+    // Gemini API の generateContent エンドポイント（画像生成対応モデル）
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
     const response = await fetch(url, {
       method: 'POST',
@@ -44,10 +44,15 @@ export default function App() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        instances: [{ prompt: prompt }],
-        parameters: {
-          sampleCount: 1,
-          aspectRatio: "1:1"
+        contents: [
+          {
+            parts: [
+              { text: prompt }
+            ]
+          }
+        ],
+        generationConfig: {
+          responseModalities: ["IMAGE", "TEXT"]
         }
       }),
     });
@@ -58,8 +63,19 @@ export default function App() {
     }
 
     const data = await response.json();
-    const base64Image = data.predictions[0].bytesBase64Encoded;
-    return `data:image/png;base64,${base64Image}`;
+    
+    // 生成結果から画像データ(Base64)を取得
+    const candidates = data.candidates || [];
+    for (const candidate of candidates) {
+      const parts = candidate.content?.parts || [];
+      for (const part of parts) {
+        if (part.inlineData && part.inlineData.mimeType.startsWith('image/')) {
+          return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+        }
+      }
+    }
+
+    throw new Error('画像が生成されませんでした。プロンプトを変えて再度試してください。');
   };
 
   // ボタンを押した時の処理
