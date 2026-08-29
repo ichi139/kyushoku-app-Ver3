@@ -30,13 +30,13 @@ export default function App() {
     return `A cute Japanese elementary school lunch tray (Kyushoku) layout containing: ${menuString}. bright pop anime style, clean lines, colorful, vector graphic feel, top-down isometric view, clean background, bright appetite-inducing visual for kids, high resolution.`;
   };
 
-  // 画像生成APIを呼び出す関数（Gemini API 対応版）
+  // 画像生成APIを呼び出す関数（最新 gemini-3.6-flash 対応版）
   const callGenerateApi = async (prompt) => {
     // ↓↓ ★ここに取得したAPIキーを入れてください★ ↓↓
     const apiKey = "AQ.Ab8RN6JXb17jD9clF8s4rOPC9MCenjmxkO8x4WApx9GHk2GJhQ"; 
     
-    // Gemini API の generateContent エンドポイント（画像生成対応モデル）
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+    // 最新モデル gemini-3.6-flash のエンドポイント
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`;
 
     const response = await fetch(url, {
       method: 'POST',
