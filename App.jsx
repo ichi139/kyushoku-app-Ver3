@@ -51,7 +51,7 @@ export default function App() {
   };
 
   const callGenerateApi = async (promptText) => {
-    const apiKey = "";
+    const apiKey = "AQ.Ab8RN6JXb17jD9clF8s4rOPC9MCenjmxkO8x4WApx9GHk2GJhQ";
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent?key=${apiKey}`;
 
     const delays = [1000, 2000, 4000, 8000];
